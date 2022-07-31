@@ -19,3 +19,7 @@ Prepare database
 Run server
 
 `symfony server:start`
+
+Run tests
+
+`php bin/phpunit`

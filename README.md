@@ -18,8 +18,8 @@ Prepare database
 
 Run server
 
-`symfony server:start`
+`composer start`
 
 Run tests
 
-`php bin/phpunit`
+`composer test`

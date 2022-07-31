@@ -13,7 +13,17 @@ services:
       - db-data:/var/lib/postgresql/data:rw
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+  ###< doctrine/doctrine-bundle ###
+
+  test-database:
+    image: postgres:${POSTGRES_VERSION:-13}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_TEST_DB:-sortileges-test}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD:-root}
+      POSTGRES_USER: ${POSTGRES_TEST_USER:-root}
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
 
 volumes:
   ###> doctrine/doctrine-bundle ###

@@ -14,7 +14,7 @@ final class Version20220802221838 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create sigil spells table';
     }
 
     public function up(Schema $schema): void

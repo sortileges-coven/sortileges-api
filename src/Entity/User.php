@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -9,6 +11,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ApiResource(
+    collectionOperations: [
+        'register' => [
+            'method' => 'POST',
+            'path' => '/register',
+            'controller' => RegistrationController::class,
+            'openapi_context' => [
+                'summary' => 'Register a new user',
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'email' => ['type' => 'string', 'required' => 'true'],
+                                    'password' => ['type' => 'string', 'required' => 'true', 'minLength' => 8],
+                                ],
+                            ],
+                            'example' => [
+                                'email' => 'johndoe@example.com',
+                                'password' => 'mySecr3tPasswOrd',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+    itemOperations: []
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

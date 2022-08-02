@@ -27,7 +27,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'register', methods: 'POST')]
-    public function index(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         // Check params & return error if needed
         $constraints = new Collection([

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SigilSpellRepository::class)]
-#[ApiResource(shortName: 'sigil-spells')]
+#[ApiResource(attributes: ['security' => "is_granted('ROLE_USER')"], shortName: 'sigil-spells')]
 class SigilSpell
 {
     #[ORM\Id]

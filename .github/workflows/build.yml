@@ -68,6 +68,10 @@ jobs:
       - name: Database schema setup
         run: php bin/console --env=test doctrine:schema:create
 
+      # —— Misc Setup ————
+      - name: Auth keys generation
+        run: php bin/console lexik:jwt:generate-keypair
+
       # —— Code style ————
       - name: PHP CS Fixer (lint)
         run: composer cs-fix

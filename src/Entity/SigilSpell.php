@@ -8,7 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SigilSpellRepository::class)]
-#[ApiResource(attributes: ['security' => "is_granted('ROLE_USER')"], shortName: 'sigil-spells')]
+#[ApiResource(
+    attributes: ['security' => "is_granted('ROLE_USER')"],
+    shortName: 'sigil-spells'
+)]
 class SigilSpell
 {
     #[ORM\Id]
@@ -26,6 +29,11 @@ class SigilSpell
     #[ORM\Column(length: 1500)]
     #[Assert\NotBlank]
     private ?string $content = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sigilSpells')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    private ?User $witch = null;
 
     public function getId(): ?int
     {
@@ -64,6 +72,18 @@ class SigilSpell
     public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getWitch(): ?User
+    {
+        return $this->witch;
+    }
+
+    public function setWitch(?User $witch): self
+    {
+        $this->witch = $witch;
 
         return $this;
     }

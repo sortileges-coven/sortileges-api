@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,7 +41,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
             ],
         ],
     ],
-    itemOperations: []
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -59,6 +60,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'witch', targetEntity: SigilSpell::class, orphanRemoval: true)]
+    private Collection $sigilSpells;
+
+    public function __construct()
+    {
+        $this->sigilSpells = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -128,5 +137,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, SigilSpell>
+     */
+    public function getSigilSpells(): Collection
+    {
+        return $this->sigilSpells;
+    }
+
+    public function addSigilSpell(SigilSpell $sigilSpell): self
+    {
+        if (!$this->sigilSpells->contains($sigilSpell)) {
+            $this->sigilSpells->add($sigilSpell);
+            $sigilSpell->setWitch($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSigilSpell(SigilSpell $sigilSpell): self
+    {
+        if ($this->sigilSpells->removeElement($sigilSpell)) {
+            // set the owning side to null (unless already changed)
+            if ($sigilSpell->getWitch() === $this) {
+                $sigilSpell->setWitch(null);
+            }
+        }
+
+        return $this;
     }
 }

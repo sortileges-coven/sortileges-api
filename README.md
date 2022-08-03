@@ -22,15 +22,9 @@ Prepare database
 
 `docker-compose up -d`
 
-`php bin/console doctrine:database:create`
+Wait for the database containers being ready (`docker ps`, **STATUS** column) then init dev and test databases
 
-`php bin/console doctrine:migrations:migrate`
-
-Prepare test database
-
-`php bin/console --env=test doctrine:database:create`
-
-`php bin/console --env=test doctrine:schema:create`
+`composer init-db`
 
 ## Usage
 

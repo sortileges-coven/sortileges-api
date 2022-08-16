@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
         ]);
 
         if (!is_null($user)) {
-            return $this->json(['message' => 'User with this email already exists.'], Response::HTTP_CONFLICT);
+            return $this->json(['message' => 'An user with this email already exists.'], Response::HTTP_CONFLICT);
         }
 
         // Fill user

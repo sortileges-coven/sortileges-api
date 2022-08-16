@@ -64,6 +64,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'witch', targetEntity: SigilSpell::class, orphanRemoval: true)]
     private Collection $sigilSpells;
 
+    #[ORM\Column(length: 127, unique: true)]
+    private ?string $pseudo = null;
+
     public function __construct()
     {
         $this->sigilSpells = new ArrayCollection();
@@ -165,6 +168,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $sigilSpell->setWitch(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

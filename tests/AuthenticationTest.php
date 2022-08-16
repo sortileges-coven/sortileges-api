@@ -17,6 +17,7 @@ class AuthenticationTest extends ApiTestCase
 
         $user = new User();
         $user->setEmail('test@example.com');
+        $user->setPseudo('aValidPseudo');
         $user->setPassword(
             $container->get('security.user_password_hasher')->hashPassword($user, '$3CR3T')
         );

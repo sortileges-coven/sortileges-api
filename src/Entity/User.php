@@ -29,11 +29,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
                                 'properties' => [
                                     'email' => ['type' => 'string', 'required' => 'true'],
                                     'password' => ['type' => 'string', 'required' => 'true', 'minLength' => 8],
+                                    'pseudo' => ['type' => 'string', 'required' => 'true', 'minLength' => 3],
                                 ],
                             ],
                             'example' => [
                                 'email' => 'johndoe@example.com',
                                 'password' => 'mySecr3tPasswOrd',
+                                'pseudo' => 'johnDoe',
                             ],
                         ],
                     ],

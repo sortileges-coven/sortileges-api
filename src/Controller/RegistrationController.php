@@ -31,10 +31,11 @@ class RegistrationController extends AbstractController
     {
         // Check params & return error if needed
         $constraints = new Collection([
-            'password' => [new NotBlank(), new Length(['min' => 8])],
             'email' => [new NotBlank(), new Email()],
+            'password' => [new NotBlank(), new Length(['min' => 8, 'max' => 255])],
+            'pseudo' => [new NotBlank(), new Length(['min' => 3, 'max' => 127])],
         ]);
-        $parameters = ['email' => $request->get('email'), 'password' => $request->get('password')];
+        $parameters = ['email' => $request->get('email'), 'password' => $request->get('password'), 'pseudo' => $request->get('pseudo')];
         $validator = Validation::createValidator();
         $errors = $validator->validate($parameters, $constraints);
         if (count($errors) > 0) {
@@ -51,17 +52,28 @@ class RegistrationController extends AbstractController
 
         $email = $parameters['email'];
         $password = $parameters['password'];
+        $pseudo = $parameters['pseudo'];
+
+        // Check unique email
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-
         if (!is_null($user)) {
             return $this->json(['message' => 'An user with this email already exists.'], Response::HTTP_CONFLICT);
+        }
+
+        // Check unique pseudo
+        $user = $this->userRepository->findOneBy([
+          'pseudo' => $pseudo,
+        ]);
+        if (!is_null($user)) {
+            return $this->json(['message' => 'An user with this pseudo already exists.'], Response::HTTP_CONFLICT);
         }
 
         // Fill user
         $user = new User();
         $user->setEmail($email);
+        $user->setPseudo($pseudo);
         $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->passwordHasher->hashPassword(
             $user,

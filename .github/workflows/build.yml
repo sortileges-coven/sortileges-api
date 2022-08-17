@@ -1,81 +1,81 @@
 name: Lint + PHPUnit tests
 on:
-  push:
-  pull_request:
-    branches:
-      - main
+    push:
+    pull_request:
+        branches:
+            - main
 
 env:
-  APP_ENV: test
+    APP_ENV: test
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ["8.1"]
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: ["8.1"]
 
-    # PostGreSQL test database init
-    services:
-      postgres:
-        image: postgis/postgis
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: sortileges-test
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        # PostGreSQL test database init
+        services:
+            postgres:
+                image: postgis/postgis
+                env:
+                    POSTGRES_USER: root
+                    POSTGRES_PASSWORD: root
+                    POSTGRES_DB: sortileges-test
+                ports:
+                    - 54330:5432
+                # needed because the postgres container does not provide a healthcheck
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    steps:
-      - uses: actions/checkout@v2
+        steps:
+            - uses: actions/checkout@v2
 
-      # —— Setup ————
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: php-cs-fixer, phpunit
-          extensions: curl, gd, intl, mbstring, openssl, pdo_pgsql, pgsql
+            # —— Setup ————
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  tools: php-cs-fixer, phpunit
+                  extensions: curl, gd, intl, mbstring, openssl, pdo_pgsql, pgsql
 
-      - name: Check PHP Extensions
-        run: php -m
+            - name: Check PHP Extensions
+              run: php -m
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+            - name: Validate composer.json and composer.lock
+              run: composer validate
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+            - uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+            - name: Install dependencies
+              run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Check the Symfony console
-        run: bin/console -V
+            - name: Check the Symfony console
+              run: bin/console -V
 
-      # —— DB Setup ——————
-      - name: Database creation
-        run: php bin/console --env=test doctrine:database:create
-      - name: Database schema setup
-        run: php bin/console --env=test doctrine:schema:create
+            # —— DB Setup ——————
+            - name: Database creation
+              run: php bin/console --env=test doctrine:database:create
+            - name: Database schema setup
+              run: php bin/console --env=test doctrine:schema:create
 
-      # —— Misc Setup ————
-      - name: Auth keys generation
-        run: php bin/console lexik:jwt:generate-keypair
+            # —— Misc Setup ————
+            - name: Auth keys generation
+              run: php bin/console lexik:jwt:generate-keypair
 
-      # —— Code style ————
-      - name: PHP CS Fixer (lint)
-        run: composer cs-fix
+            # —— Code style ————
+            - name: PHP CS Fixer (lint)
+              run: composer cs-fix
 
-      # —— Tests —————————
-      - name: PHPUnit (tests)
-        run: composer test
+            # —— Tests —————————
+            - name: PHPUnit (tests)
+              run: composer test
